@@ -1,5 +1,4 @@
-#
-include "q2.c"
+#include "q2.c"
 
 char * cur_token;
 FILE * inputfile;
