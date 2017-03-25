@@ -430,8 +430,31 @@ void command() {
     else {
         error("Expected first(statement)");
     }
+}
 
+/**
+<print-arg> ::=
+  TEXT
+ <expr>
+ <position>
+ 
+  **/
 
+void print_arg() {
+    find_token(cur_token, inputfile);
+
+    if(is_text(cur_token) == 1) {
+        printf("Matched to %s\n", cur_token);
+    }
+    else if(check_first_expr() == 1) {
+        expr();
+    }
+    else if(check_first_position() == 1) {
+        position();
+    }
+    else {
+        error("TEXT | expr | position in print_arg");
+    }
 }
 
 int main() {
