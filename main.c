@@ -5,9 +5,7 @@ FILE *inputfile;
 char *first_declarations[2]={"int", "char"};
 int error_flag=0;
 
-void id_list();
-void tprime();
-void statement_list();
+void picture();
 
 void error(char *expected)
 {
@@ -15,405 +13,105 @@ void error(char *expected)
     error_flag=1;
 }
 
-void data_type()
-{
-    if (strcmp("int",cur_token)==0 || strcmp("char",cur_token)==0)
-    {
+/**
+<picture> ::=
+  .PS [NUMBER [NUMBER]]\n
+  <statement> ...
+  .PE \n
+  */
+
+void picture() {
+    if (strcmp(cur_token, ".PS") == 0) {
         find_token(cur_token, inputfile);
         printf("Pointing to %s\n",cur_token);
-    }
-    else error("int or char");
-}
-
-void id_list_dash2()
-{
-    if (strcmp(cur_token, ",")==0)
-    {
-        find_token(cur_token, inputfile);
-        printf("Pointing to %s\n",cur_token);
-        id_list();
-    }
-
-}
-
-void id_list_dash()
-{
-    if (strcmp(cur_token, ",")==0)
-    {
-        find_token(cur_token, inputfile);
-        printf("Pointing to %s\n",cur_token);
-        id_list();
-    }
-    else if (strcmp(cur_token, "[")==0)
-    {
-        find_token(cur_token, inputfile);
-        printf("Pointing to %s\n", cur_token);
-        if (is_number(cur_token))
-        {
-            find_token(cur_token, inputfile);
-            printf("Pointing to %s\n", cur_token);
-            if (strcmp(cur_token, "]")==0)
-            {
-                find_token(cur_token, inputfile);
-                printf("Pointing to %s\n", cur_token);
-
-            }
-            else error("]");
-            id_list_dash2();
-        }
-        else error("[");
-    }
-}
-
-void id_list()
-{
-    if (search_sym_table(cur_token)>=0)
-    {
-        find_token(cur_token, inputfile);
-        printf("Pointing to %s\n",cur_token);
-        id_list_dash();
-    }
-    else error("identifier");
-}
-
-void declarations()
-{
-    if (is_found_string(cur_token, first_declarations, 2)>=0)
-    {
-        data_type();
-        id_list();
-        if (strcmp(cur_token,";")==0)
-        {
+        
+        if(is_number(cur_token)) {
             find_token(cur_token, inputfile);
             printf("Pointing to %s\n",cur_token);
-            declarations();
-        }
-    }
-}
 
-void relop()
-{
-    if (is_found_string(cur_token, relops, 6)>=0)
-    {
-        find_token(cur_token, inputfile);
-        printf("Pointing to %s\n",cur_token);
-
-    }
-    else error("relational operator");
-
-}
-
-void addop()
-{
-    if (is_found_string(cur_token, addops, 2)>=0)
-    {
-        find_token(cur_token, inputfile);
-        printf("Pointing to %s\n",cur_token);
-
-    }
-    else error("+ or -");
-
-}
-
-void mulop()
-{
-    if (is_found_string(cur_token, mulops, 3)>=0)
-    {
-        find_token(cur_token, inputfile);
-        printf("Pointing to %s\n",cur_token);
-
-    }
-    else error("* or / or %");
-
-}
-
-void factor()
-{
-    if (search_sym_table(cur_token)>=0 || is_number(cur_token))
-    {
-        find_token(cur_token, inputfile);
-        printf("Pointing to %s\n",cur_token);
-    }
-    else error("identifier or number");
-}
-
-void tprime()
-{
-    if (is_found_string(cur_token, mulops, 3)>=0)
-    {
-        mulop();
-        factor();
-        tprime();
-    }
-}
-
-void term()
-{
-    factor();
-    tprime();
-}
-
-void seprime()
-{
-    if (is_found_string(cur_token, addops, 2)>=0)
-    {
-        addop();
-        term();
-        seprime();
-    }
-}
-
-void simple_expn()
-{
-    term();
-    seprime();
-}
-
-void eprime()
-{
-    if (is_found_string(cur_token, relops, 6)>=0)
-    {
-        relop();
-        simple_expn();
-    }
-}
-
-void expn()
-{
-    simple_expn();
-    eprime();
-}
-
-void assign_stat()
-{
-    if (search_sym_table(cur_token)>=0)
-    {
-        find_token(cur_token, inputfile);
-        printf("Pointing to %s\n",cur_token);
-        if (strcmp(cur_token,"=")==0)
-        {
-            find_token(cur_token, inputfile);
-            printf("Pointing to %s\n",cur_token);
-            expn();
-        }
-        else error("=");
-    }
-    else error("identifier");
-}
-
-void dprime()
-{
-    if (strcmp(cur_token, "else")==0)
-    {
-        find_token(cur_token, inputfile);
-        printf("Pointing to %s\n",cur_token);
-        if (strcmp(cur_token, "{")==0)
-        {
-            find_token(cur_token, inputfile);
-            printf("Pointing to %s\n",cur_token);
-            statement_list();
-            if (strcmp(cur_token, "}")==0)
-            {
+            if(is_number(cur_token)) {
                 find_token(cur_token, inputfile);
                 printf("Pointing to %s\n",cur_token);
-            }
-            else error("}");
-        }
-        else error("{");
-    }
-}
 
-void decision_stat()
-{
-    if (strcmp(cur_token, "if")==0)
-    {
-        find_token(cur_token, inputfile);
-        printf("Pointing to %s\n",cur_token);
-        if (strcmp(cur_token, "(")==0)
-        {
-            find_token(cur_token, inputfile);
-            printf("Pointing to %s\n",cur_token);
-            expn();
-            if (strcmp(cur_token, ")")==0)
-            {
-                find_token(cur_token, inputfile);
-                printf("Pointing to %s\n",cur_token);
-                if (strcmp(cur_token, "{")==0)
-                {
+                if(is_found_string(curr_token, primitive, 10) || is_text(cur_token)) {
                     find_token(cur_token, inputfile);
                     printf("Pointing to %s\n",cur_token);
 
-                    statement_list();
-                    if (strcmp(cur_token, "}")==0)
-                    {
-                        find_token(cur_token, inputfile);
-                        printf("Pointing to %s\n",cur_token);
-                        dprime();
-                    }
-                    else error("}");
+                    statement();
                 }
-                else error("{");
-            }
-            else error(")");
-        }
-        else error("(");
-    }
-    else error("if");
-}
-
-void looping_stat()
-{
-    if (strcmp(cur_token, "while")==0)
-    {
-        find_token(cur_token, inputfile);
-        printf("Pointing to %s\n",cur_token);
-        if (strcmp(cur_token, "(")==0)
-        {
-            find_token(cur_token, inputfile);
-            printf("Pointing to %s\n",cur_token);
-            expn();
-            if (strcmp(cur_token, ")")==0)
-            {
-                find_token(cur_token, inputfile);
-                printf("Pointing to %s\n",cur_token);
-                if (strcmp(cur_token,"{")==0)
-                {
+                if(strcmp(cur_token, ".PE") == 0) {
                     find_token(cur_token, inputfile);
                     printf("Pointing to %s\n",cur_token);
-                    statement_list();
-                    if (strcmp(cur_token, "}")==0)
-                    {
-                        find_token(cur_token, inputfile);
-                        printf("Pointing to %s\n",cur_token);
-                    }
-                    else error("}");
                 }
-                else error("{");
+                else {
+                    error(".PE in Picture");
+                }
             }
-            else error(")");
+            else {
+                error("NUMBER in Picture");
+            }           
         }
-        else error("(");
+        else {
+            error("NUMBER in Picture");
+        }
     }
-    else if (strcmp(cur_token, "for")==0)
-    {
-        find_token(cur_token, inputfile);
-        printf("Pointing to %s\n",cur_token);
-        if (strcmp(cur_token, "(")==0)
-        {
+    else {
+        error(".PS in Picture");
+    }
+
+}
+
+/**
+<statement> ::=
+  <command> ;
+  <command> \n
+**/
+
+void statement() {
+    if(
+    // <primitive> [<attribute>]
+    is_found_string(curr_token, primitive, 10) ||
+    // LABEL : [;] <command>
+    // LABEL : [;] <command> [<position>]
+    is_label(curr_token) ||
+    // { <command> ... }
+    strcmp(cur_token, "{") == 0 ||
+    // VARIABLE [:] = <any-expr>
+    is_variable(curr_token) ||
+    // up | down | left | right
+    is_direction(curr_token) ||
+    // COMMAND-LINE
+    is_command_line(curr_token) ||
+    // command <print-arg> ...
+    strcmp(curr_token, "command") == 0 ||
+    // print <print-arg> ...
+    strcmp(curr_token, "print") == 0 ||
+    // sh BALANCED-TEXT
+    strcmp(curr_token, "sh") == 0 ||
+    /*
+    copy FILENAME
+    copy [FILENAME] thru MACRONAME [until TEXT]
+    copy [FILENAME] thru BALANCED-BODY [until TEXT]
+    */
+    strcmp(curr_token, "copy") == 0 ||
+    // for VARIABLE = <expr> to <expr> [by [*] <expr>] do BALANCED-BODY
+    strcmp(curr_token, "for") == 0 ||
+    // if <any-expr> then BALANCED-BODY [else BALANCED-BODY]
+    strcmp(curr_token, "if") == 0 ||
+    // reset [VARIABLE [[,] VARIABLE ...]]
+    strcmp(curr_token, "reset") == 0
+    ) {
+        command();
+        if(strcmp(curr_token, ";") == 0) {
             find_token(cur_token, inputfile);
             printf("Pointing to %s\n",cur_token);
-            assign_stat();
-            if (strcmp(cur_token, ";")==0)
-            {
-                find_token(cur_token, inputfile);
-                printf("Pointing to %s\n",cur_token);
-                expn();
-                if (strcmp(cur_token, ";")==0)
-                {
-                    find_token(cur_token, inputfile);
-                    printf("Pointing to %s\n",cur_token);
-                    assign_stat();
-                    if (strcmp(cur_token, ")")==0)
-                    {
-                        find_token(cur_token, inputfile);
-                        printf("Pointing to %s\n",cur_token);
-                        if (strcmp(cur_token,"{")==0)
-                        {
-                            find_token(cur_token, inputfile);
-                            printf("Pointing to %s\n",cur_token);
-                            statement_list();
-                            if (strcmp(cur_token, "}")==0)
-                            {
-                                find_token(cur_token, inputfile);
-                                printf("Pointing to %s\n",cur_token);
-                            }
-                            else error("}");
-                        }
-                        else error("{");
-                    }
-                    else error(")");
-                }
-                else error(";");
-            }
-            else error(";");
-        }
-        else error("(");
+        }       
+
     }
 }
 
-void statement()
-{
-    if (strcmp(cur_token, "if")==0)
-    {
-        decision_stat();
-    }
-    else if (strcmp(cur_token, "while")==0 || strcmp(cur_token, "for")==0)
-    {
-        looping_stat();
-    }
-    else if (search_sym_table(cur_token)>=0)
-    {
-        assign_stat();
-        if (strcmp(cur_token, ";")==0)
-        {
-            find_token(cur_token, inputfile);
-            printf("Pointing to %s\n",cur_token);
-        }
-        else error(";");
-    }
-    else error("loop or decision or identifier");
-}
 
-void statement_list()
-{
-    if (search_sym_table(cur_token)>=0 || strcmp(cur_token, "if")==0 || strcmp(cur_token, "for")==0 || strcmp(cur_token, "while")==0)
-    {
-        statement();
-        statement_list();
-    }
-}
-
-void program()
-{
-    if (strcmp(cur_token,"main")==0)
-    {
-        find_token(cur_token, inputfile);
-        printf("Pointing to %s\n",cur_token);
-        if (strcmp(cur_token, "(")==0)
-        {
-            find_token(cur_token, inputfile);
-            printf("Pointing to %s\n",cur_token);
-            if (strcmp(cur_token, ")") == 0)
-            {
-                find_token(cur_token, inputfile);
-                printf("Pointing to %s\n",cur_token);
-                if (strcmp(cur_token, "{")==0)
-                {
-                    find_token(cur_token, inputfile);
-                    printf("Pointing to %s\n",cur_token);
-                    declarations();
-                    statement_list(); 
-                    if (strcmp(cur_token,"}")==0)
-                    {
-                        find_token(cur_token, inputfile);
-                        return;
-                    }
-                    else 
-                    {
-                        error("}");
-                    }
-                }
-                else error("{");
-            }
-            else error(")");
-        } 
-        else error("(");
-    }
-    else error("main");
-}
-
-int main()
-{
+int main() {
     int count = 0;
     char filename[20];
     cur_token=malloc(20);

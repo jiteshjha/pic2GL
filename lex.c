@@ -2,7 +2,26 @@
 #include <stdlib.h>
 #include <string.h>
 
-char *keywords[32] = {"auto", "double", "int", "struct", "break", "else", "long", "switch", "case", "enum", "register", "typedef", "char", "extern", "return", "union", "const", "float", "short", "unsigned", "continue", "for", "signed", "void", "default", "goto", "sizeof", "volatile", "do", "if", "static", "while"};
+/**
+<primitive> ::=
+  box                   # closed object — rectangle
+  circle                # closed object — circle
+  ellipse               # closed object — ellipse
+  arc                   # open object — quarter-circle
+  line                  # open object — line
+  arrow                 # open object — line with arrowhead
+  spline                # open object — spline curve
+  move
+  TEXT TEXT ...         # text within invisible box
+  plot <expr> TEXT      # formatted text
+  ’[’ <command> ... ’]’
+**/
+char *primitive[10] = {"box", "circle", "ellipse", "arc", "line", "arrow", "spline", "move", "plot", "["};
+/**
+    up | down | left | right
+**/
+char *direction[4] = {"up", "down", "left", "right"};
+
 char spec_char[8] = {'(',')','{','}',';',',', '[', ']'};
 char operator_sym[10] = {'=','<','>','!','+','-','/','*','&','|'};
 char identifier_sym[37] = {'a','b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '_'};
